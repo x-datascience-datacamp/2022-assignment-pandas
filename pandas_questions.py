@@ -16,15 +16,15 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv(
-        r"C:\Users\thoma\Desktop\DataCamp\2022-assignment-pandas\data\referendum.csv",
+        r"data/referendum.csv",
         sep=";",
     )
     regions = pd.read_csv(
-        r"C:\Users\thoma\Desktop\DataCamp\2022-assignment-pandas\data\regions.csv",
+        r"data/regions.csv",
         sep=",",
     )
     departments = pd.read_csv(
-        r"C:\Users\thoma\Desktop\DataCamp\2022-assignment-pandas\data\departments.csv",
+        r"data/departments.csv",
         sep=",",
     )
 
@@ -56,7 +56,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     referendum_new = referendum.drop(
         referendum[referendum["Department code"].str.startswith("Z")].index
     )
-    referendum_new.loc[:, "Department code"] = referendum_new["Department code"].apply(
+    referendum_new.loc[:, "Department code"] = \
+        referendum_new["Department code"].apply(
         lambda x: x.zfill(2)
     )
     to_return = regions_and_departments.merge(
@@ -100,9 +101,13 @@ def plot_referendum_map(referendum_result_by_regions):
     regions = regions.rename(columns={"code": "code_reg"})
     regions = regions.set_index("code_reg")
     df = pd.merge(
-        regions, referendum_result_by_regions, left_index=True, right_index=True
+        regions,
+        referendum_result_by_regions,
+        left_index=True,
+        right_index=True
     )
-    df["ratio"] = df["Choice A"] / (df["Registered"] - df["Abstentions"] - df["Null"])
+    df["ratio"] = df["Choice A"] \
+        / (df["Registered"] - df["Abstentions"] - df["Null"])
     df.plot(column="ratio", legend=True, cmap="OrRd")
 
     return df
@@ -113,9 +118,11 @@ if __name__ == "__main__":
     referendum, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(df_reg, df_dep)
     referendum_and_areas = merge_referendum_and_areas(
-        referendum, regions_and_departments
+        referendum,
+        regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    referendum_results = compute_referendum_result_by_regions(
+        referendum_and_areas)
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
