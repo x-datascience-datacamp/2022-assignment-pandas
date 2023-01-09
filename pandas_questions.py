@@ -28,8 +28,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
-    return pd.merge(regions, departments, on='code_reg')
+    inter_df = pd.merge(regions, departments, left_on='code', right_on='region_code')
+    result = pd.DataFrame()
+    result[['code_reg', 'name_reg', 'code_dep', 'name_dep']]  = inter_df[['code_x', 'name_x', 'code_y', 'name_y']]
+    return result
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
