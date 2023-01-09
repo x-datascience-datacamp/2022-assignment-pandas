@@ -124,6 +124,7 @@ def plot_referendum_map(referendum_result_by_regions):
     gdf["ratio"] = gdf["Choice A"] / (gdf["Choice A"] + gdf["Choice B"])
 
     gdf.plot("ratio", legend=True)
+    plt.show()
 
     return gdf
 
