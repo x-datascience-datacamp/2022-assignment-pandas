@@ -29,12 +29,18 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    regions = regions.rename(
-        columns={"code": "code_reg", "id": "id_reg", "name": "name_reg"}
-    )
-    departments = departments.rename(
-        columns={"code": "code_dep", "region_code": "code_reg", "name": "name_dep"}
-    )
+    columns_regions = {
+        "code": "code_dep",
+        "region_code": "code_reg",
+        "name": "name_dep",
+    }
+    regions = regions.rename(columns=columns_regions)
+    columns_departments = {
+        "code": "code_dep",
+        "region_code": "code_reg",
+        "name": "name_dep",
+    }
+    departments = departments.rename(columns=columns_departments)
     df_merge = regions.merge(
         departments, left_on="code_reg", right_on="code_reg", how="inner"
     )
@@ -81,7 +87,8 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-    df_geo_regions = gpd.read_file(os.path.join("data", "regions.geojson")).rename(
+    df_geo_regions = gpd.read_file(os.path.join("data", "regions.geojson"))
+    df_geo_regions = df_geo_regions.rename(
         columns={"code": "code_reg", "nom": "name_reg"}
     )
     df_final = referendum_result_by_regions.merge(
@@ -103,7 +110,9 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    referendum_results = compute_referendum_result_by_regions(
+        referendum_and_areas
+    )
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
