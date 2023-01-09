@@ -31,14 +31,13 @@ def merge_regions_and_departments(regions, departments):
     """
 
     merged = pd.merge(
-        regions[['code', 'name']], departments[['region_code', 'code', 'name']],
+        regions[['code', 'name']],
+        departments[['region_code', 'code', 'name']],
         left_on='code',
         right_on='region_code',
         how='left',
         suffixes=('_reg', '_dep')
-    )
-
-    merged = merged.reset_index()
+    ).drop(columns=['region_code'])
 
     return merged
 
@@ -50,24 +49,15 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    referendum_rename = referendum.rename(
-        columns={
-            'Department name': 'name_dep',
-            'Department code': 'code_dep'
-        }
-    ).drop(columns=['name_dep'])
-    referendum_nodomtom = referendum_rename[
-        referendum_rename['code_dep'].str.isdigit()
-    ]
-    referendum_nodomtom['code_dep'] = referendum_nodomtom['code_dep'].apply(lambda x: int(x))
-    regions_and_departments_nodomtom = regions_and_departments[
-        regions_and_departments['code_dep'].str.isdigit()
-    ]
+    # Adding 0 in front of department to match other keys
+    referendum['Department code'] = referendum['Department code']\
+        .apply(lambda x: x.zfill(2))
+
     merged = pd.merge(
-        referendum_rename,
-        regions_and_departments_nodomtom,
-        on='code_dep',
-        how='left'
+        referendum,
+        regions_and_departments,
+        left_on='Department code',
+        right_on='code_dep'
     )
 
     return merged
@@ -123,7 +113,8 @@ def plot_referendum_map(referendum_result_by_regions):
         left_on='nom'
     )
 
-    merged['ratio'] = merged['Choice A']/(merged['Choice A'] + merged['Choice B'] + merged['Abstentions'] + merged['Null'])
+    merged['ratio'] = merged['Choice A']/(merged['Choice A']
+                                          + merged['Choice B'])
     geo_df = gpd.GeoDataFrame(merged)
     geo_df.plot('ratio')
 
