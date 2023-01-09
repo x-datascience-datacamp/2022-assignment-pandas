@@ -1,4 +1,4 @@
-"""Plotting referendum results in pandas.
+"""Plotting referendum results in pandas.#
 
 In short, we want to make beautiful map to report results of a referendum. In
 some way, we would like to depict results with something similar to the maps
