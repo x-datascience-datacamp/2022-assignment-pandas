@@ -1,4 +1,5 @@
 """Plotting referendum results in pandas.
+
 In short, we want to make beautiful map to report results of a referendum. In
 some way, we would like to depict results with something similar to the maps
 that you can find here:
@@ -12,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 def load_data():
-    '''Load data from the CSV files referundum/regions/departments.'''
+    """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv('data/referendum.csv', sep=';')
     regions = pd.read_csv('data/regions.csv', sep=',')
     departments = pd.read_csv('data/departments.csv', sep=',')
@@ -21,11 +22,11 @@ def load_data():
 
 
 def merge_regions_and_departments(regions, departments):
-    '''Merge regions and departments in one DataFrame.
+    """Merge regions and departments in one DataFrame.
 
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
-    '''
+    """
     regions_temp = regions.rename(
         columns={'name': 'name_reg', 'code': 'code_reg'})
     departments_temp = departments.rename(
@@ -41,12 +42,11 @@ def merge_regions_and_departments(regions, departments):
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
-    '''Merge referendum and regions_and_departments in one DataFrame.
+    """Merge referendum and regions_and_departments in one DataFrame.
 
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
-    '''
-
+    """
     referendum_temp = referendum[referendum['Department name']
                                  != "FRANCAIS DE L'ETRANGER"]
     # del when department code starts with 'Z' for DOM-TOM
@@ -66,12 +66,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
-    '''Return a table with the absolute count for each region.
+    """Return a table with the absolute count for each region.
 
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
-    '''
-
+    """
     reg_result = referendum_and_areas.drop(columns=['code_dep', 'Town code',
                                                     'Town name', 'name_dep',
                                                     'code_reg'],
