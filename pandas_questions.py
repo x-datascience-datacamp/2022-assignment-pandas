@@ -30,20 +30,20 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     columns_regions = {
-        "code": "code_dep",
-        "region_code": "code_reg",
-        "name": "name_dep",
+        "code": "code_reg",
+        "name": "name_reg",
     }
     regions = regions.rename(columns=columns_regions)
+    print(regions.head())
     columns_departments = {
         "code": "code_dep",
         "region_code": "code_reg",
         "name": "name_dep",
     }
+
     departments = departments.rename(columns=columns_departments)
-    df_merge = regions.merge(
-        departments, left_on="code_reg", right_on="code_reg", how="inner"
-    )
+    print(departments.head())
+    df_merge = regions.merge(departments, on="code_reg", how="inner")
     return df_merge[["code_reg", "name_reg", "code_dep", "name_dep"]]
 
 
