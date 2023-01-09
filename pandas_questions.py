@@ -16,11 +16,10 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     PATH = './data'
-    referendum = pd.read_csv(PATH + '/referendum.csv', sep =";")
+    referendum = pd.read_csv(PATH + '/referendum.csv', sep=";")
     regions = pd.read_csv(PATH + '/regions.csv')
     departments = pd.read_csv(PATH + '/departments.csv')
     return referendum, regions, departments
-
 
 
 def merge_regions_and_departments(regions, departments):
@@ -31,7 +30,7 @@ def merge_regions_and_departments(regions, departments):
     """
     regions.columns = ['id', 'region_code', 'name', 'slug']
     df = pd.merge(regions, departments, on='region_code', how='left')
-    df = df.drop(['id_x','id_y','slug_x', 'slug_y'], axis=1)
+    df = df.drop(['id_x', 'id_y' ,'slug_x', 'slug_y'], axis=1)
     df.columns = ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     return df
 
@@ -42,11 +41,24 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum = referendum.drop(referendum[referendum['Department code'].str.contains("Z")].index)
-    regions_and_departments = regions_and_departments.drop(regions_and_departments[regions_and_departments['code_dep'].str.len() == 3].index)
-    index = regions_and_departments[regions_and_departments['code_dep'].values < '10']['code_dep'].index
-    regions_and_departments.loc[list(index), 'code_dep'] = regions_and_departments.loc[list(index), 'code_dep'].apply(lambda x: x[1])
-    df = pd.merge(referendum, regions_and_departments, right_on='code_dep', left_on='Department code', how='left')
+    referendum = referendum.drop(
+        referendum[referendum['Department code'].str.contains("Z")].index
+        )
+    regions_and_departments = regions_and_departments.drop(
+        regions_and_departments[
+            regions_and_departments['code_dep'].str.len() == 3
+            ].index
+        )
+    index = regions_and_departments[
+        regions_and_departments['code_dep'].values < '10'
+        ]['code_dep'].index
+    regions_and_departments.loc[
+        list(index), 'code_dep'
+        ] = regions_and_departments.loc[
+        list(index), 'code_dep'
+        ].apply(lambda x: x[1])
+    df = pd.merge(referendum, regions_and_departments, 
+        right_on='code_dep', left_on='Department code', how='left')
     return df
 
 
@@ -57,7 +69,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
     df = (referendum_and_areas.groupby(['code_reg', 'name_reg']).agg('sum')
-          [['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']].reset_index('name_reg'))
+          [['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']]
+          .reset_index('name_reg'))
     return df
 
 
