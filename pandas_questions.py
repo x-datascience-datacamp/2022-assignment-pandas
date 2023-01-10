@@ -28,8 +28,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    a= regions["code"].nunique()
-    b= departments["region_code"].nunique()
     merge = regions.merge(departments, left_on="code", right_on="region_code",
                           suffixes=("_reg", "_dep"))
 
@@ -44,14 +42,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     regions_and_departments = regions_and_departments[regions_and_departments["code_dep"].str.len() != 3]
-
     first_deps = referendum["Department code"].str.len() == 1
     referendum.loc[first_deps, "Department code"] = ("0" + referendum.loc[first_deps, "Department code"])
-
     referendum = referendum[~referendum["Department code"].str.isalpha()]
-
     merge = referendum.merge(regions_and_departments, left_on="Department code", right_on="code_dep")
-
     return merge
 
 
@@ -79,7 +73,6 @@ def plot_referendum_map(referendum_result_by_regions):
     data = referendum_result_by_regions.merge(geo_data, right_on="code", left_index=True)
     data['ratio'] = data['Choice A']/(data['Registered']-data['Abstentions']-data["Null"])
     data = gpd.GeoDataFrame(data)
-
     data.plot()
     return data
 
