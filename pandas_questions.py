@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files r/regions/departments."""
-    r = pd.read_csv('data/r.csv', sep=';')
+    r = pd.read_csv('data/referendum.csv', sep=';')
     regions = pd.read_csv('data/regions.csv')
     departments = pd.read_csv('data/departments.csv')
     return r, regions, departments
@@ -50,7 +50,7 @@ def standardize_dep_code(code):
     else: 
         return '0' + str(int(code))
 
-def merge_r_and_areas(r, r_d):
+def merge_referendum_and_areas(r, r_d):
     """Merge r and regions_and_departments in one DataFrame.
 
     You can drop the lines relative to DOM-TOM-COM departments, and the
@@ -68,7 +68,7 @@ def merge_r_and_areas(r, r_d):
     return res_df
 
 
-def compute_r_result_by_regions(r_and_areas):
+def compute_referendum_result_by_regions(r_and_areas):
     """Return a table with the absolute count for each region.
 
     The return DataFrame should be indexed by `code_reg` and have columns:
@@ -80,7 +80,7 @@ def compute_r_result_by_regions(r_and_areas):
     return r_and_areas
 
 
-def plot_r_map(r_result_by_regions):
+def plot_referendum_map(r_result_by_regions):
     """Plot a map with the results from the r.
 
     * Load the geographic data with geopandas from `regions.geojson`.
