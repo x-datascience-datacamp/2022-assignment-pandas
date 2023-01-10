@@ -83,7 +83,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
 
 def supprimer0(x):
-    """Function printing python version."""
+    """Aide plot_referendum_map."""
     if x[0] == "0":
         return x[1:]
     return x
