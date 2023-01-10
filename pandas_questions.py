@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.read_csv("data/referendum.csv",sep=";")
-    regions = pd.read_csv("data/regions.csv",sep=",")
-    departments = pd.read_csv("data/departments.csv",sep=",")
+    referendum = pd.read_csv("data/referendum.csv", sep=";")
+    regions = pd.read_csv("data/regions.csv", sep=",")
+    departments = pd.read_csv("data/departments.csv", sep=",")
 
     return referendum, regions, departments
 
@@ -28,9 +28,14 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    temp = pd.merge(regions[["code","name"]].rename(columns={"code":"region_code"}), departments[["region_code","code","name"]], on="region_code",how="right")
-    temp.rename(columns={"region_code":"code_reg", "name_x":"name_reg", "code":"code_dep", "name_y":"name_dep"},inplace=True)
-
+    temp = pd.merge(regions[["code", "name"]].rename(
+                    columns={"code": "region_code"}),
+                    departments[["region_code", "code", "name"]],
+                    on="region_code",
+                    how="right")
+    temp.rename(columns={"region_code": "code_reg",
+                "name_x": "name_reg", "code": "code_dep",
+                         "name_y": "name_dep"}, inplace=True)
     return temp
 
 
@@ -40,15 +45,18 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    drop_dep_code=['ZA', 'ZB', 'ZC', 'ZD','ZM', 'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
+    drop_dep_code = ['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 'ZN', 'ZP', 'ZS',
+                     'ZW', 'ZX', 'ZZ']
     new_ref = referendum[~referendum["Department code"].isin(drop_dep_code)]
-    new_ref["Department code"].loc[new_ref["Department code"].str.len()==1] = ('0'+ 
-                                new_ref["Department code"].loc[new_ref["Department code"].str.len()==1]
-                                                                              )
-                
-    temp = pd.merge(new_ref, regions_and_departments.rename(columns={"code_dep":"Department code"}), on="Department code", how="left")   
-    temp["code_dep"] = temp.loc[:,"Department code"]
-
+    temp = new_ref["Department code"].str.len() == 1
+    new_ref["Department code"].loc[temp] = ('0'
+                                            + new_ref
+                                            ["Department code"].loc[temp])
+    temp = pd.merge(new_ref,
+                    regions_and_departments.rename(
+                        columns={"code_dep": "Department code"}),
+                    on="Department code", how="left")
+    temp["code_dep"] = temp.loc[:, "Department code"]
     return temp
 
 
@@ -59,11 +67,11 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    temp = referendum_and_areas.groupby(["code_reg","name_reg"])["Registered", "Abstentions","Null", "Choice A", "Choice B"].sum()
-
+    temp = referendum_and_areas.groupby(["code_reg", "name_reg"])
+    temp = temp["Registered", "Abstentions",
+                "Null", "Choice A", "Choice B"].sum()
     temp.reset_index(inplace=True)
     temp.set_index("code_reg", inplace=True)
-
     return temp
 
 
@@ -78,14 +86,16 @@ def plot_referendum_map(referendum_result_by_regions):
     """
 
     gdf = gpd.read_file("data/regions.geojson")
-    
-    temp = pd.merge(referendum_result_by_regions, gdf.rename(columns={"code":"code_reg"})[["code_reg", "geometry"]], on="code_reg", how="left")
-    temp.set_index("code_reg",inplace=True)
+    temp = pd.merge(referendum_result_by_regions,
+                    gdf.rename(
+                        columns={"code": "code_reg"})
+                    [["code_reg", "geometry"]],
+                    on="code_reg", how="left")
+    temp.set_index("code_reg", inplace=True)
     temp["ratio"] = temp["Choice A"]/(temp["Choice A"]+temp["Choice B"])
     temp = gpd.GeoDataFrame(temp).set_geometry("geometry")
-    temp.plot("ratio",legend=True)
-    
-    return gpd.GeoDataFrame(temp[["geometry","name_reg","ratio"]])
+    temp.plot("ratio", legend=True)
+    return gpd.GeoDataFrame(temp[["geometry", "name_reg", "ratio"]])
 
 
 if __name__ == "__main__":
