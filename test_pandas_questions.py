@@ -8,7 +8,6 @@ from pandas_questions import merge_referendum_and_areas
 from pandas_questions import merge_regions_and_departments
 from pandas_questions import compute_referendum_result_by_regions
 
-
 def test_load_data():
     referendum, regions, departments = load_data()
 
