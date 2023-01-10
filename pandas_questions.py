@@ -27,18 +27,15 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
-    merged_df = pd.merge(
-        departments, regions, right_on='code', left_on='region_code', how='left'
-        )
-    df =  merged_df.rename(
+    regions = regions.rename(columns={'code': 'region_code'})
+    merged_df = pd.merge(departments, regions, on='region_code', how='left')
+    df = merged_df.rename(
         columns={
             'region_code': 'code_reg',
-        'code_x': 'code_dep',
-        'name_x': 'name_dep',
-        'name_y':'name_reg'}
-        )
-
+            'code': 'code_dep',
+            'name_x': 'name_dep',
+            'name_y': 'name_reg'
+            })
     df = df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
     return df
 
@@ -46,9 +43,8 @@ def merge_regions_and_departments(regions, departments):
 def standardize_dep_code(code):
     if (code == '2A') | (code == '2B'):
         return code
-    
-    else: 
-        return '0' + str(int(code))
+    return '0' + str(int(code))
+
 
 def merge_referendum_and_areas(r, r_d):
     """Merge r and regions_and_departments in one DataFrame.
@@ -64,7 +60,13 @@ def merge_referendum_and_areas(r, r_d):
         )
     r_d['code_dep'] = r_d['code_dep'].map(standardize_dep_code)
 
-    res_df = pd.merge(r_d, r, left_on='code_dep', right_on='Department code', how='right')
+    res_df = pd.merge(
+        r_d,
+        r,
+        left_on='code_dep',
+        right_on='Department code',
+        how='right'
+        )
     return res_df
 
 
@@ -76,7 +78,8 @@ def compute_referendum_result_by_regions(r_and_areas):
     """
     r_and_areas = r_and_areas.groupby(
         ['code_reg', 'name_reg'], as_index=False).sum()
-    r_and_areas = r_and_areas.set_index(['code_reg']).drop(columns=['Town code'])
+    r_and_areas = r_and_areas.set_index(
+        ['code_reg']).drop(columns=['Town code'])
     return r_and_areas
 
 
@@ -90,23 +93,23 @@ def plot_referendum_map(r_res_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the ress.
     """
     geo_region = gpd.read_file('data/regions.geojson')
-    geo_region = geo_region.rename(columns={'code':'code_reg'})
+    geo_region = geo_region.rename(columns={'code': 'code_reg'})
 
     r_res_by_regions = r_res_by_regions.reset_index()
     denom = (r_res_by_regions['Choice A'] + r_res_by_regions['Choice B'])
-    r_res_by_regions['ratio'] =  r_res_by_regions['Choice A'] / denom
-    r_res_by_regions = r_res_by_regions[['code_reg', 'ratio']] 
+    r_res_by_regions['ratio'] = r_res_by_regions['Choice A'] / denom
+    r_res_by_regions = r_res_by_regions[['code_reg', 'ratio']]
 
     res_df = pd.merge(
-        geo_region, 
-        r_res_by_regions, 
-        on='code_reg', 
+        geo_region,
+        r_res_by_regions,
+        on='code_reg',
         how='left'
-        ).rename(columns={'nom':'name_reg'})  
+        ).rename(columns={'nom': 'name_reg'})
     return res_df
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
 
     r, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(
@@ -115,7 +118,7 @@ if __name__ == "__main__":
     r_and_areas = merge_referendum_and_areas(
         r, regions_and_departments
     )
-    r_ress = compute_referendum_res_by_regions(
+    r_ress = compute_referendum_result_by_regions(
         r_and_areas
     )
     print(r_ress)
