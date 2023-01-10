@@ -16,11 +16,14 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv(
-        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas/data/referendum.csv', sep=';')
+        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas/data\
+        /referendum.csv', sep=';')
     regions = pd.read_csv(
-        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas/data/regions.csv', sep=',', index_col='id')
+        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas/data\
+        /regions.csv', sep=',', index_col='id')
     departments = pd.read_csv(
-        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas/data/departments.csv', sep=',', index_col='id')
+        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas/data\
+        /departments.csv', sep=',', index_col='id')
 
     return referendum, regions, departments
 
@@ -33,8 +36,10 @@ def merge_regions_and_departments(regions, departments):
     """
     df_merged = regions.merge(departments, how='inner',
                               left_on='code', right_on='region_code')
-    df_merged = df_merged.drop(['code_x', 'slug_x', 'slug_y'], axis=1).rename(columns={
-        "region_code": "code_reg", "code_y": "code_dep", "name_y": "name_dep", "name_x": "name_reg"})
+    df_merged = df_merged.drop(['code_x', 'slug_x', 'slug_y'], axis=1)\
+        .rename(columns={
+            "region_code": "code_reg", "code_y": "code_dep", "name_y":
+            "name_dep", "name_x": "name_reg"})
 
     return df_merged
 
@@ -57,8 +62,10 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    df1 = referendum_and_areas.groupby(by=['code_reg', 'name_reg'], as_index=False)[
-        ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']].sum()
+    df1 = referendum_and_areas.groupby(
+        by=['code_reg', 'name_reg'], as_index=False)[
+        ['name_reg', 'Registered', 'Abstentions', 'Null',
+            'Choice A', 'Choice B']].sum()
     df1 = df1.set_index('code_reg')
 
     return df1
@@ -74,7 +81,8 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     df = gpd.read_file(
-        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas/data/regions.geojson')
+        '/Users/ahmedmernissi/Downloads/2022-assignment-pandas\
+        /data/regions.geojson')
     df1 = df.merge(referendum_result_by_regions, how='inner',
                    left_on='nom', right_on='name_reg')
     df1['ratio'] = df1['Choice A'] / \
