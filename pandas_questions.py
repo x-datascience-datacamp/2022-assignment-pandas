@@ -47,7 +47,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    regions_and_departments["code_dep"] = regions_and_departments["code_dep"].apply(
+    regions_and_departments["code_dep"] = regions_and_departments[
+        "code_dep"].apply(
         lambda x: supprimer0(x)
     )
     newData = pd.merge(
@@ -76,8 +77,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
         right=referendum_and_areas[["name_reg", "code_reg"]].drop_duplicates(),
         on="code_reg",
         how="left",
-    )[["name_reg", "Registered", "Abstentions", "Null", "Choice A", "Choice B"]]
-
+        )[["name_reg", "Registered", "Abstentions",
+           "Null", "Choice A", "Choice B"]]
     return newData
 
 
@@ -141,9 +142,11 @@ if __name__ == "__main__":
     referendum, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(df_reg, df_dep)
     referendum_and_areas = merge_referendum_and_areas(
-        referendum, regions_and_departments
+        referendum,
+        regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    referendum_results = compute_referendum_result_by_regions(
+        referendum_and_areas)
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
