@@ -3,3 +3,6 @@ pandas
 pytest
 geopandas
 descartes
+json
+shapely.geometry.Polygon
+shapely.geometry.MultiPolygon
