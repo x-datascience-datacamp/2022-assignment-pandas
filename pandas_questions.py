@@ -16,13 +16,13 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv(
-        '/Users/admin/Downloads/2022-assignment-pandas/data/referendum.csv',
+        'data/referendum.csv',
         sep=';')
     regions = pd.read_csv(
-        '/Users/admin/Downloads/2022-assignment-pandas/data/regions.csv',
+        'data/regions.csv',
         sep=',', index_col='id')
     departments = pd.read_csv(
-        '/Users/admin/Downloads/2022-assignment-pandas/data/departments.csv',
+        'data/departments.csv',
         sep=',', index_col='id')
 
     return referendum, regions, departments
@@ -77,7 +77,7 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     regions_gpd = gpd.read_file(
-        "/Users/admin/Downloads/2022-assignment-pandas/data/regions.geojson")
+        "data/regions.geojson")
     referendum_result_by_regions = regions_gpd.merge(
         referendum_result_by_regions, right_on='name_reg', left_on='nom')
     referendum_result_by_regions.plot("Choice A")
