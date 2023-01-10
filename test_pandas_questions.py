@@ -30,9 +30,11 @@ def test_merge_regions_and_departments():
         df_reg, df_dep
     )
 
+
     assert set(regions_and_departments.columns) == set([
         'code_reg', 'name_reg', 'code_dep', 'name_dep'
     ])
+
     assert regions_and_departments.shape == (109, 4)
 
 
