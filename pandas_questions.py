@@ -1,7 +1,7 @@
-"""Plotting r results in pandas.
+"""Plotting r ress in pandas.
 
-In short, we want to make beautiful map to report results of a r. In
-some way, we would like to depict results with something similar to the maps
+In short, we want to make beautiful map to report ress of a r. In
+some way, we would like to depict ress with something similar to the maps
 that you can find here:
 https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
 
@@ -80,45 +80,45 @@ def compute_referendum_result_by_regions(r_and_areas):
     return r_and_areas
 
 
-def plot_referendum_map(r_result_by_regions):
-    """Plot a map with the results from the r.
+def plot_referendum_map(r_res_by_regions):
+    """Plot a map with the ress from the r.
 
     * Load the geographic data with geopandas from `regions.geojson`.
-    * Merge these info into `r_result_by_regions`.
-    * Use the method `GeoDataFrame.plot` to display the result map. The results
+    * Merge these info into `r_res_by_regions`.
+    * Use the method `GeoDataFrame.plot` to display the res map. The ress
       should display the rate of 'Choice A' over all expressed ballots.
-    * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
+    * Return a gpd.GeoDataFrame with a column 'ratio' containing the ress.
     """
     geo_region = gpd.read_file('data/regions.geojson')
     geo_region = geo_region.rename(columns={'code':'code_reg'})
 
-    r_result_by_regions = r_result_by_regions.reset_index()
-    denom = (r_result_by_regions['Choice A'] + r_result_by_regions['Choice B'])
-    r_result_by_regions['ratio'] =  r_result_by_regions['Choice A'] / denom
-    r_result_by_regions = r_result_by_regions[['code_reg', 'ratio']] 
+    r_res_by_regions = r_res_by_regions.reset_index()
+    denom = (r_res_by_regions['Choice A'] + r_res_by_regions['Choice B'])
+    r_res_by_regions['ratio'] =  r_res_by_regions['Choice A'] / denom
+    r_res_by_regions = r_res_by_regions[['code_reg', 'ratio']] 
 
     res_df = pd.merge(
         geo_region, 
-        r_result_by_regions, 
+        r_res_by_regions, 
         on='code_reg', 
         how='left'
         ).rename(columns={'nom':'name_reg'})  
     return res_df
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": 
 
     r, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(
         df_reg, df_dep
     )
-    r_and_areas = merge_r_and_areas(
+    r_and_areas = merge_referendum_and_areas(
         r, regions_and_departments
     )
-    r_results = compute_r_result_by_regions(
+    r_ress = compute_referendum_res_by_regions(
         r_and_areas
     )
-    print(r_results)
+    print(r_ress)
 
-    plot_r_map(r_results)
+    plot_referendum_map(r_ress)
     plt.show()
