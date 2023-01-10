@@ -85,17 +85,13 @@ def plot_referendum_map(referendum_result_by_regions):
     """
 
     geo_reg = gpd.read_file('data/regions.geojson')
-    geo_referundum = pd.merge(geo_reg, referendum_result_by_regions,
-                              left_on='code', right_on='code_reg',
-                              how='inner')
-    geo_referundum['ratio'] = geo_referundum['Choice A'] \
-        / (geo_referundum['Registered'] - geo_referundum['Abstentions']
-           - geo_referundum['Null'])
-    geo_referundum = geo_referundum.rename(columns={'nom': 'name_reg'})
-    geo_referundum.plot(column='ratio', legend=True,
-                        legend_kwds={'label': 'choice_A_ratio',
-                        'orientation': 'horizontal'})
-    return geo_referundum
+    geo_reg = geo_reg.merge(referendum_result_by_regions,
+                  left_on="code",
+                  right_index=True)
+
+    df["ratio"] = df["Choice A"] / (df["Choice A"] + df["Choice B"])
+    df.plot(column="ratio", legend=True)
+    return geo_reg
 
 
 if __name__ == '__main__':
