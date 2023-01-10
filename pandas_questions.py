@@ -18,7 +18,20 @@ def load_data():
     referendum = pd.DataFrame({})
     regions = pd.DataFrame({})
     departments = pd.DataFrame({})
-
+    
+    """
+    Example
+    
+    regions = pd.DataFrame({'code_reg': [1, 2, 3], 'name_reg': ['Region 1', 'Region 2', 'Region 3']})
+    departments = pd.DataFrame({'code_dep': [101, 102, 103, 201, 202], 'name_dep': ['Department 101', 
+                                                                                'Department 102', 
+                                                                                'Department 103', 
+                                                                                'Department 201', 
+                                                                                'Department 202'], 
+                                                                                'code_reg': [1, 1, 2, 2, 3]})
+                                                                                
+    referendum = pd.DataFrame({'code_dep': [101, 102, 103, 201, 202], 'votes': [1000, 2000, 3000, 4000, 5000]})
+    """
     return referendum, regions, departments
 
 
@@ -28,6 +41,11 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    # Merge the dataframes
+    result = pd.merge(regions, departments, on='code_reg')
+
+    # reorder column
+    result = result[['code_reg','name_reg','code_dep','name_dep']]
 
     return pd.DataFrame({})
 
@@ -38,8 +56,17 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    # merge the dataframe
+    result = pd.merge(referendum, regions_and_departments, on='code_dep')
 
-    return pd.DataFrame({})
+    # drop the unwanted rows
+    result = result[~result.DOM_TOM_COM]
+    result = result[~result.French_abroad]
+
+    # drop unwanted columns
+    result = result.drop(columns=['DOM_TOM_COM','French_abroad'])
+
+    return result
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -48,8 +75,12 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
+    # group by code_reg
+    result = referendum_and_areas.groupby(['code_reg', 'name_reg']).sum()
+    result.reset_index(inplace=True)
+    result.set_index('code_reg', inplace=True)
 
-    return pd.DataFrame({})
+    return result
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -61,8 +92,16 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
+    # Load the geographic data
+    regions = gpd.read_file('regions.geojson')
+    
+    # Merging the two DataFrames
+    result = pd.merge(regions,referendum_result_by_regions, left_on = 'name_reg',right_on='name_reg')
+    
+    # adding ratio column
+    result['ratio'] = result['Choice A'] / (result['Choice A'] + result['Choice B'] + result['Abstentions'] + result['Null'])
 
-    return gpd.GeoDataFrame({})
+    return result
 
 
 if __name__ == "__main__":
@@ -81,5 +120,3 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
-
-# This is a comment 
