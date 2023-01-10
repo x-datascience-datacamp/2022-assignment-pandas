@@ -3,5 +3,3 @@ pandas
 pytest
 geopandas
 descartes
-shapely.geometry.Polygon
-shapely.geometry.MultiPolygon
