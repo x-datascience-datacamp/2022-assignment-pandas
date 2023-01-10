@@ -28,7 +28,8 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    inter_df = pd.merge(regions, departments, left_on="code", right_on="region_code")
+    inter_df = pd.merge(regions, departments,
+                        left_on="code", right_on="region_code")
     result = pd.DataFrame()
     result[["code_reg", "name_reg", "code_dep", "name_dep"]] = inter_df[
         ["code_x", "name_x", "code_y", "name_y"]
@@ -44,7 +45,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     dep = [str(i) for i in range(1, 10)]
     for i in dep:
-        referendum.loc[referendum["Department code"] == i, "Department code"] = "0" + i
+        referendum.loc[referendum["Department code"]
+                       == i, "Department code"] = "0" + i
 
     df = pd.merge(
         referendum[~referendum["Department code"].str.startswith("Z")],
@@ -106,7 +108,8 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    referendum_results = compute_referendum_result_by_regions(
+        referendum_and_areas)
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
