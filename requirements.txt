@@ -2,7 +2,6 @@ numpy
 pandas
 pytest
 geopandas
-json
 descartes
 shapely.geometry.Polygon
 shapely.geometry.MultiPolygon
