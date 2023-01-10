@@ -20,10 +20,10 @@ def load_data():
         sep=';')
     regions = pd.read_csv(
         'data/regions.csv',
-        sep=',', index_col='id')
+        sep=',')
     departments = pd.read_csv(
         'data/departments.csv',
-        sep=',', index_col='id')
+        sep=',')
 
     return referendum, regions, departments
 
