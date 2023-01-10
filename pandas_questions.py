@@ -79,7 +79,6 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     return data
 
 
-
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
 
@@ -99,6 +98,7 @@ def plot_referendum_map(referendum_result_by_regions):
     gd['ratio'] = gd['Choice A'] / (gd['Choice A'] + gd['Choice B'])
     gd.plot("ratio", cmap="Blues")
     return gd
+
 
 if __name__ == "__main__":
 
