@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 
 def load_data():
-    """Load data from the CSV files referundum/regions/departments.bt"""
+    """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv("data/referendum.csv", sep=";")
     regions = pd.read_csv("data/regions.csv")
     departments = pd.read_csv("data/departments.csv")
@@ -83,6 +83,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
 
 def supprimer0(x):
+    """Function printing python version."""
     if x[0] == "0":
         return x[1:]
     return x
