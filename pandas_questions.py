@@ -41,8 +41,8 @@ def merge_regions_and_departments(regions, departments):
 
 
 def standardize_dep_code(code):
-    """
-    f
+    """F.
+
     Standardizer of departement codes.
     """
     if (code == '2A') | (code == '2B'):
