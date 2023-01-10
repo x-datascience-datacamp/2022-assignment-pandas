@@ -8,6 +8,7 @@ from pandas_questions import merge_referendum_and_areas
 from pandas_questions import merge_regions_and_departments
 from pandas_questions import compute_referendum_result_by_regions
 
+
 def test_load_data():
     referendum, regions, departments = load_data()
 
@@ -28,7 +29,6 @@ def test_merge_regions_and_departments():
     regions_and_departments = merge_regions_and_departments(
         df_reg, df_dep
     )
-
 
     assert set(regions_and_departments.columns) == set([
         'code_reg', 'name_reg', 'code_dep', 'name_dep'
