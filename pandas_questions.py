@@ -36,7 +36,8 @@ def merge_regions_and_departments(regions, departments):
         right_on="region_code",
     )
     regions_and_departments.drop(  # Drop unwanted columns
-        columns=["id_x", "id_y", "slug_x", "region_code", "slug_y"], inplace=True
+        columns=["id_x", "id_y", "slug_x", "region_code", "slug_y"],
+        inplace=True,
     )
     regions_and_departments.rename(  # Used wanted column names
         columns={
@@ -57,28 +58,39 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum_and_areas = pd.merge(  # Inner join by default
+    # Clean merge str column by removing leading zeros
+    regions_and_departments["code_dep"] = regions_and_departments[
+        "code_dep"
+    ].str.lstrip("0")
+
+    # take department codes from regions_and_departments as basis
+    referendum_and_areas = pd.merge(
+        how="left",
         left=regions_and_departments,
         right=referendum,
         left_on="code_dep",
         right_on="Department code",
     )
+
     # Drop unwanted lines
-    mask = referendum_and_areas["name_reg"].isin(
+    mask = referendum_and_areas["Department name"].isin(
         [
-            "Collectivités d'Outre-Mer",
-            "Guadeloupe",
-            "Martinique",
-            "Guyane",
-            "La Réunion",
-            "Mayotte",
+            "GUADELOUPE",
+            "MARTINIQUE",
+            "GUYANE",
+            "LA REUNION",
+            "MAYOTTE",
+            "NOUVELLE CALEDONIE",
+            "POLYNESIE FRANCAISE",
+            "SAINT PIERRE ET MIQUELON",
+            "WALLIS-ET-FUTUNA",
+            "SAINT-MARTIN/SAINT-BARTHELEMY",
+            "FRANCAIS DE L'ETRANGER",
         ]
     )
     referendum_and_areas = referendum_and_areas.loc[~mask]
-    # Drop duplicate columns
-    referendum_and_areas.drop(
-        columns=["Department code", "Department name"], inplace=True
-    )
+
+    referendum_and_areas.dropna(inplace=True)
 
     return referendum_and_areas
 
@@ -89,7 +101,14 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    agg_cols = ["name_reg", "Registered", "Abstentions", "Null", "Choice A", "Choice B"]
+    agg_cols = [
+        "name_reg",
+        "Registered",
+        "Abstentions",
+        "Null",
+        "Choice A",
+        "Choice B",
+    ]
 
     def agg_func_helper(s: pd.Series):
         if s.name == "name_reg":
@@ -122,13 +141,12 @@ def plot_referendum_map(referendum_result_by_regions):
     )
 
     referendum_results["expressed"] = (
-        referendum_results["Null"]
-        + referendum_results["Choice A"]
-        + referendum_results["Choice B"]
+        referendum_results["Choice A"] + referendum_results["Choice B"]
     )
+
     referendum_results["ratio"] = (
         referendum_results["Choice A"] / referendum_results["expressed"]
-    ) * 100
+    )
 
     f, ax = plt.subplots()
     referendum_results.plot(
@@ -137,7 +155,7 @@ def plot_referendum_map(referendum_result_by_regions):
         legend=True,
         cmap="OrRd",
     )
-    f.suptitle("Ratio of Choice A over all expressed ballots (%)")
+    f.suptitle("Ratio of Choice A over all expressed ballots")
 
     return referendum_results
 
@@ -149,7 +167,9 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    referendum_results = compute_referendum_result_by_regions(
+        referendum_and_areas
+    )
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
