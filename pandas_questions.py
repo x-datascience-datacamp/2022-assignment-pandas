@@ -6,7 +6,7 @@ that you can find here:
 https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
 
 To do that, you will load the data as pandas.DataFrame, merge the info and
-aggregate them by regions and finally plot them on a map using `geopandas`.
+aggregate them by regions and finally plot them on a map using `geopandas`.#
 """
 import pandas as pd
 import geopandas as gpd
