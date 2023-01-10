@@ -5,7 +5,6 @@
 In short, we want to make beautiful map to report results of a referendum. In
 some way, we would like to depict results with something similar to the maps
 that you can find here:
-https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
 
 To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
@@ -108,7 +107,7 @@ if __name__ == '__main__':
             regions_and_departments)
     referendum_results = \
         compute_referendum_result_by_regions(referendum_and_areas)
-    print referendum_results
+    print(referendum_results)
 
     plot_referendum_map(referendum_results)
     plt.show()
