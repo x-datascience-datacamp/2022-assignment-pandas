@@ -43,9 +43,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    #referendum = referendum[referendum['Department code'].str.contains('Z') == False]
-    #referendum = referendum.astype({'Department code': 'int64'})
-    #regions_and_departments = regions_and_departments.astype({'code_dep': 'int64', 'code_reg': 'int64'})
     referendum['Department code'] = referendum['Department code'].apply(lambda x: x.zfill(2))
     merged = pd.merge(referendum, regions_and_departments, how='inner', left_on='Department code', right_on='code_dep')
     return merged
@@ -78,6 +75,7 @@ def plot_referendum_map(referendum_result_by_regions):
     merged['ratio'] = merged['Choice A'] / (merged['Registered'] - (merged['Abstentions'] + merged['Null']))
     merged.plot(column='ratio', legend=True, legend_kwds={'label': 'Choice A ratio'})
     return merged
+
 
 if __name__ == "__main__":
 
