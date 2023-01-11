@@ -28,11 +28,12 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    regions = regions.rename(columns={"code": "code_reg", "name": "name_reg"})
-    departments = departments.rename(
-        columns={"region_code": "code_reg", "code": "code_dep",
-                 "name": "name_dep"})
-    df_merged = regions.merge(departments, how='inner', on='code_reg')
+    df_merged = regions.merge(departments, how='inner',
+                              left_on='code', right_on='region_code')
+    df_merged = df_merged.drop(['code_x', 'slug_x', 'slug_y'], axis=1)\
+        .rename(columns={
+            "region_code": "code_reg", "code_y": "code_dep", "name_y":
+            "name_dep", "name_x": "name_reg"})
 
     return df_merged
 
