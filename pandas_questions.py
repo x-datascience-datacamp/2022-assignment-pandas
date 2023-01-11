@@ -40,7 +40,7 @@ def merge_regions_and_departments(regions, departments):
     df = df.rename(columns={"code_x": "code_reg", "name_x": "name_reg",
                    "code_y": "code_dep", "name_y": "name_dep"})
 
-    return df
+    return df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -55,7 +55,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
                                        how='inner', left_on='code_dep',
                                        right_on='Department code')
 
-    return df
+    return df[[
+        'Department code', 'Department name', 'Town code', 'Town name',
+        'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B',
+        'code_dep', 'code_reg', 'name_reg', 'name_dep'
+    ]]
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
