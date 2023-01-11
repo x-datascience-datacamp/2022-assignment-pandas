@@ -29,7 +29,11 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     dep = departments[['code', 'name', 'region_code']]
-    dep = dep.rename(columns={'code': 'code_dep', 'name': 'name_dep', 'region_code': 'code_reg'})
+    dep = dep.rename(columns={
+        'code': 'code_dep',
+        'name': 'name_dep',
+        'region_code': 'code_reg'
+    })
     reg = regions[['code', 'name']]
     reg = reg.rename(columns={'code': 'code_reg', 'name': 'name_reg'})
     merged = pd.merge(dep, reg, how="inner", on='code_reg')
@@ -43,7 +47,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum['Department code'] = referendum['Department code'].apply(lambda x: x.zfill(2))
+    referendum['Department code'] =\
+        referendum['Department code'].apply(lambda x: x.zfill(2))
     merged = pd.merge(
         referendum,
         regions_and_departments,
@@ -96,7 +101,11 @@ def plot_referendum_map(referendum_result_by_regions):
             merged['Choice A'] /
             (merged['Registered'] - (merged['Abstentions'] + merged['Null']))
     )
-    merged.plot(column='ratio', legend=True, legend_kwds={'label': 'Choice A ratio'})
+    merged.plot(
+        column='ratio',
+        legend=True,
+        legend_kwds={'label': 'Choice A ratio'}
+    )
     return merged
 
 
