@@ -48,6 +48,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    referendum['Department code'] = referendum['Department code']\
+        .astype(str).str.zfill(2)
     df = regions_and_departments.merge(
         referendum, left_on='code_dep', right_on='Department code')
 
