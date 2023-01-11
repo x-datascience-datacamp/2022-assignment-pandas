@@ -81,7 +81,14 @@ def test_compute_referendum_result_by_regions():
 
     # Check result shape
     assert set(referendum_result_by_regions.columns) == set(
-        ["name_reg", "Registered", "Abstentions", "Null", "Choice A", "Choice B"]
+        [
+            "name_reg",
+            "Registered",
+            "Abstentions",
+            "Null",
+            "Choice A",
+            "Choice B"
+        ]
     ), (
         "To keep the name of the region, you can use either another merge or "
         "a clever groupby."
@@ -89,10 +96,13 @@ def test_compute_referendum_result_by_regions():
     assert referendum_result_by_regions.shape == (13, 6)
 
     # check that some of the values
-    referendum_result_by_regions = referendum_result_by_regions.set_index("name_reg")
+    a = "name_reg"
+    b = "Normandie"
+    c = "Grand Est"
+    referendum_result_by_regions = referendum_result_by_regions.set_index(a)
     assert referendum_result_by_regions["Registered"].sum() == 43_262_592
-    assert referendum_result_by_regions.loc["Normandie", "Abstentions"] == 426_075
-    assert referendum_result_by_regions.loc["Grand Est", "Choice A"] == 1_088_684
+    assert referendum_result_by_regions.loc[b, "Abstentions"] == 426_075
+    assert referendum_result_by_regions.loc[c, "Choice A"] == 1_088_684
     assert referendum_result_by_regions.loc["Occitanie", "Null"] == 62_732
 
 
@@ -108,7 +118,8 @@ def test_plot_referendum_map():
     gdf_referendum = plot_referendum_map(referendum_result_by_regions)
 
     assert isinstance(gdf_referendum, gpd.GeoDataFrame), (
-        "The return object should be a GeoDataFrame, not a " f"{type(gdf_referendum)}."
+        "The return object should be a GeoDataFrame, not a "
+        f"{type(gdf_referendum)}."
     )
     assert "ratio" in gdf_referendum.columns
     gdf_referendum = gdf_referendum.set_index("name_reg")
