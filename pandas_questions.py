@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv('data/referendum.csv', sep=';')
-    regions = pd.read_csv('data/regions.csv', sep=',', index_col='id')
-    departments = pd.read_csv('data/departments.csv', sep=',', index_col='id')
+    regions = pd.read_csv('data/regions.csv', sep=',')
+    departments = pd.read_csv('data/departments.csv', sep=',')
 
     return referendum, regions, departments
 
@@ -44,6 +44,9 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    referendum['Department code'] = referendum['Department code'].replace(
+        ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        ['01', '02', '03', '04', '05', '06', '07', '08', '09'])
     df = referendum.merge(regions_and_departments, how='inner',
                           left_on='Department code', right_on='code_dep')
 
