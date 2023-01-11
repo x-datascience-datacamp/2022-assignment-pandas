@@ -86,8 +86,7 @@ def plot_referendum_map(referendum_result_by_regions):
     referendum_result_by_regions['ratio'] = \
         referendum_result_by_regions['Choice A'] / \
         (referendum_result_by_regions['Choice A'] +
-         referendum_result_by_regions['Choice B'] +
-         referendum_result_by_regions['Null'])
+         referendum_result_by_regions['Choice B'])
 
     return referendum_result_by_regions
 
