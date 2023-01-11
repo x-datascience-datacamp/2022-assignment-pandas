@@ -12,8 +12,6 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
-# lounes guergous
-
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
@@ -82,17 +80,24 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
-    name_regions = referendum_and_areas[["code_reg", "name_reg"]]
+    a = "name_reg"
+    name_regions = referendum_and_areas[["code_reg", "a"]]
     name_regions.set_index("code_reg", inplace=True)
     name_regions = name_regions.groupby(["code_reg"]).first()
 
     referendum_and_areas = referendum_and_areas[
-        ["code_reg", "Registered", "Abstentions", "Null", "Choice A", "Choice B"]
+        [
+            "code_reg",
+            "Registered",
+            "Abstentions",
+            "Null",
+            "Choice A",
+            "Choice B"
+        ]
     ]
+    a = "code_reg"
     referendum_and_areas = referendum_and_areas.groupby(["code_reg"]).sum()
-
-    return pd.merge(name_regions, referendum_and_areas, on="code_reg", how="right")
+    return pd.merge(name_regions, referendum_and_areas, on=a, how="right")
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -113,14 +118,15 @@ def plot_referendum_map(referendum_result_by_regions):
     referendum_result_by_regions = referendum_result_by_regions.drop(
         ["code", "nom"], axis=1
     )
-
-    referendum_result_by_regions["ratio"] = referendum_result_by_regions["Choice A"] / (
-        referendum_result_by_regions["Choice A"]
-        + referendum_result_by_regions["Choice B"]
+    a = "Choice A"
+    b = "ratio"
+    referendum_result_by_regions[b] = referendum_result_by_regions[a] / (
+        referendum_result_by_regions[a]
+        + referendum_result_by_regions[b]
     )
     print(type(referendum_result_by_regions))
     referendum_result_by_regions.plot(column="ratio")
-    print(type(gpd.GeoDataFrame(referendum_result_by_regions[["ratio",]])))
+    print(type(gpd.GeoDataFrame(referendum_result_by_regions[["ratio", ]])))
     return gpd.GeoDataFrame(referendum_result_by_regions)
 
 
@@ -133,7 +139,8 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    a = referendum_and_areas
+    referendum_results = compute_referendum_result_by_regions(a)
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
