@@ -42,6 +42,14 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+
+    def tidy_id(r):
+
+        if (str(r) in {'1', '2', '3', '4', '5', '6', '7', '8', '9'}):
+            return '0'+str(r)
+        else:
+            return str(r)
+
     referendum['Department code'] = referendum.apply(
         lambda x: tidy_id(x['Department code']), axis=1)
     print(referendum['Department code'])
@@ -50,14 +58,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
                     on='code_dep', how='right')
     data['Department code'] = data['code_dep']
     return data.dropna(axis=0)
-
-
-def tidy_id(r):
-
-    if (str(r) in {'1', '2', '3', '4', '5', '6', '7', '8', '9'}):
-        return '0'+str(r)
-    else:
-        return str(r)
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -92,15 +92,14 @@ def plot_referendum_map(referendum_result_by_regions):
     geo_data.rename(columns={'nom': 'name_reg'}, inplace=True)
     data = pd.merge(geo_data, referendum_result_by_regions, on='name_reg')
 
+    def ratio(Choice_A, Choice_B):
+        return Choice_A/(Choice_A + Choice_B)
+
     gpd.GeoDataFrame.plot(data['Choice A']/(data['Choice A']+data['Choice B']))
     data['ratio'] = data.apply(lambda x: ratio(int(x['Choice A']),
                                                int(x['Choice B'])), axis=1)
 
     return gpd.GeoDataFrame(data)
-
-
-def ratio(Choice_A, Choice_B):
-    return Choice_A/(Choice_A + Choice_B)
 
 
 if __name__ == "__main__":
