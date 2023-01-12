@@ -46,7 +46,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     referendum["Department code"] = referendum["Department code"].str.zfill(2)
-    df = pd.merge(referendum, 
+    df = pd.merge(referendum,
                 regions_and_departments,
                 left_on = "Department code",
                 right_on = "code_dep",
@@ -62,7 +62,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
     df = referendum_and_areas.copy()
-    df = df[['code_reg', 'name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']].groupby(['code_reg', 'name_reg']).sum().reset_index()
+    df = df[['code_reg', 'name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']].groupby(['code_reg',
+                                                                                                            'name_reg']).sum().reset_index()
     df = df.set_index('code_reg')
 
     return df
@@ -83,7 +84,7 @@ def plot_referendum_map(referendum_result_by_regions):
                       referendum_result_by_regions,
                       left_on='code', right_on='code_reg',
                       how='inner')
-    geo_df['ratio'] = geo_df['Choice A'] / (geo_df['Registered'] - 
+    geo_df['ratio'] = geo_df['Choice A'] / (geo_df['Registered'] -
                                             geo_df['Abstentions'] -
                                             geo_df['Null'])
 
@@ -91,6 +92,7 @@ def plot_referendum_map(referendum_result_by_regions):
 
     geo_df.plot(column='ratio', legend=True, ax = ax)
     plt.title('Choice A ratio')
+
     return geo_df
 
 
