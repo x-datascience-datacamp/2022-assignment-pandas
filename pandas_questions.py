@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.read_csv('data/referendum.csv', sep = ';')
-    regions = pd.read_csv('data/regions.csv', sep = ',')
-    departments = pd.read_csv('data/departments.csv', sep = ',')
+    referendum = pd.read_csv('data/referendum.csv', sep=';')
+    regions = pd.read_csv('data/regions.csv', sep=',')
+    departments = pd.read_csv('data/departments.csv', sep=',')
 
     return referendum, regions, departments
 
@@ -28,12 +28,14 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    df = pd.merge(departments[['region_code', 'code', 'name']].rename(columns={'code':'code_dep', 
-                                                                           'name':'name_dep',
-                                                                           'region_code': 'code_reg'}), 
-                regions[['code', 'name']].rename(columns={'code':'code_reg', 'name':'name_reg'}), 
-                on ='code_reg',
-                how = 'left')
+    df = pd.merge(departments[['region_code', 'code', 'name']]
+                  .rename(columns={'code': 'code_dep',
+                                   'name': 'name_dep',
+                                   'region_code': 'code_reg'}),
+                  regions[['code', 'name']]
+                  .rename(columns={'code': 'code_reg', 'name': 'name_reg'}),
+                  on='code_reg', how='left')
+
     df = df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
     return df
@@ -47,10 +49,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     referendum["Department code"] = referendum["Department code"].str.zfill(2)
     df = pd.merge(referendum,
-                regions_and_departments,
-                left_on = "Department code",
-                right_on = "code_dep",
-                how = 'inner')
+                  regions_and_departments,
+                  left_on="Department code",
+                  right_on="code_dep",
+                  how='inner')
 
     return df
 
@@ -62,8 +64,10 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
     df = referendum_and_areas.copy()
-    df = df[['code_reg', 'name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']].groupby(['code_reg',
-                                                                                                            'name_reg']).sum().reset_index()
+    df = df[['code_reg', 'name_reg', 'Registered', 'Abstentions',
+             'Null', 'Choice A', 'Choice B']]\
+        .groupby(['code_reg', 'name_reg']).sum().reset_index()
+
     df = df.set_index('code_reg')
 
     return df
@@ -90,7 +94,7 @@ def plot_referendum_map(referendum_result_by_regions):
 
     fig, ax = plt.subplots(1, 1)
 
-    geo_df.plot(column='ratio', legend=True, ax = ax)
+    geo_df.plot(column='ratio', legend=True, ax=ax)
     plt.title('Choice A ratio')
 
     return geo_df
