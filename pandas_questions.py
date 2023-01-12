@@ -13,7 +13,6 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
 
-print(24)
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv("data/referendum.csv", delimiter=';', on_bad_lines='skip')
