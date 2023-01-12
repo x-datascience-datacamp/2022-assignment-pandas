@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv('data/referendum.csv', sep=";")
-    regions = pd.read_csv("data/regions.csv",sep=",")
+    regions = pd.read_csv("data/regions.csv", sep=",")
     departments = pd.read_csv("data/departments.csv", sep=",")
 
     return referendum, regions, departments
@@ -28,7 +28,8 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    res = pd.merge(regions, departments, left_on="code", right_on="region_code")
+    res = pd.merge(regions, departments, left_on="code",
+                   right_on="region_code")
     res2 = pd.DataFrame()
     res2['code_reg'] = res['region_code']
     res2['name_reg'] = res['name_x']
@@ -44,8 +45,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum["Department code"] = referendum["Department code"].apply(lambda x : x.zfill(2))
-    res = pd.merge(referendum, regions_and_departments, left_on="Department code", right_on="code_dep")
+    referendum["Department code"] = referendum["Department code"].apply(
+        lambda x: x.zfill(2))
+    res = pd.merge(referendum, regions_and_departments,
+                   left_on="Department code", right_on="code_dep")
 
     res.dropna(inplace=True)
     return (res)
@@ -77,8 +80,10 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     map = gpd.read_file("data/regions.geojson")
-    newmap = pd.merge(map[["code","geometry"]],referendum_result_by_regions, left_on="code", right_on="code_reg")
-    newmap["ratio"] = newmap["Choice A"]/(newmap["Choice B"]+newmap["Choice A"])
+    newmap = pd.merge(map[["code", "geometry"]],
+                      referendum_result_by_regions, left_on="code", right_on="code_reg")
+    newmap["ratio"] = newmap["Choice A"] / \
+        (newmap["Choice B"]+newmap["Choice A"])
     newmap.plot(column="ratio")
 
     return newmap
