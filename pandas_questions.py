@@ -28,9 +28,8 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     df = regions.merge(departments, left_on="code", right_on="region_code",
-                       uffixes=('_reg', '_dep'))
+                       suffixes=('_reg', '_dep'))
     return df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
