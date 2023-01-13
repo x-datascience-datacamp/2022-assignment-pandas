@@ -31,10 +31,10 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
 
-    regions.rename(columns = {"code": "region_code", "slug":"name_reg"}, inplace = True)
+    regions.rename(columns = {"code": "region_code", "name":"name_reg"}, inplace = True)
     df = pd.merge(regions, departments, how='inner', on = ["region_code"])
-    df = df[["region_code", "name_reg", "code", "slug"]]
-    df.rename(columns = {"region_code":"code_reg", "code":"code_dep", "slug":"name_dep"}, inplace = True)
+    df = df[["region_code", "name_reg", "code", "name"]]
+    df.rename(columns = {"region_code":"code_reg", "code":"code_dep", "name":"name_dep"}, inplace = True)
     return df
 
 
@@ -45,9 +45,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    referendum.rename(columns = {"Department code":"code_dep"}, inplace = True)
     regions_and_departments["code_dep"].replace(['01', '02', '03', '04', '05', '06', '07', '08', '09'], ['1', '2', '3', '4', '5', '6', '7', '8', '9'], inplace = True)
-    df = pd.merge(regions_and_departments, referendum, how='inner', on=["code_dep"])
+    df = pd.merge(regions_and_departments, referendum, left_on="code_dep", right_on="Department code")
     df.replace(["COM","TOM","DOM","collectivites doutre mer"], np.nan, inplace = True)
     df.dropna(axis=0, inplace = True)
     return df
@@ -61,7 +60,10 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     """
 
     df = referendum_and_areas[['code_reg', 'name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']]
+    dff= referendum_and_areas[['code_reg', 'name_reg']].drop_duplicates()
+    dff.set_index(keys=["code_reg"], inplace = True)
     df = df.groupby(['code_reg']).sum()
+    df=pd.merge(df, dff, how='left', left_index = True, right_index = True)
     return df
 
 
@@ -79,7 +81,7 @@ def plot_referendum_map(referendum_result_by_regions):
     gr.rename(columns = {"code":"code_reg"}, inplace = True)
     gr.set_index(keys=["code_reg"], inplace = True)
     df = pd.merge(referendum_result_by_regions, gr, how='inner', left_index = True, right_index = True)
-    df["ratio"]=df["Choice A"]/(df["Choice A"]+df["Choice B"]+df["Null"])
+    df["ratio"]=df["Choice A"]/(df["Choice A"]+df["Choice B"])
     data = gpd.GeoDataFrame(df)
     data.plot("ratio", legend = True, cmap = "Blues")
     return data
