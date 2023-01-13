@@ -13,14 +13,6 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 
 
-def encode_reg(reg):
-    d = {'01': '1', '02': '2', '03': '3', '04': '4', '05': '5', '06': '6',
-         '07': '7', '08': '8', '09': '9'}
-    enc = reg.apply(lambda x: d[x] if x in ['01', '02', '03', '04', '05', '06',
-                                            '07', '08', '09'] else x)
-    return enc
-
-
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv('data/referendum.csv', sep=';')
@@ -49,7 +41,13 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     referendum_merge = referendum[~referendum['Department code'].str.isalpha()]
     aux = regions_and_departments['code_dep']
-    regions_and_departments['code_dep'] = encode_reg(aux)
+    d = {'01': '1', '02': '2', '03': '3', '04': '4', '05': '5', '06': '6',
+         '07': '7', '08': '8', '09': '9'}
+    regions_and_departments['code_dep'] = aux.apply(lambda x: d[x]
+                                                    if x in ['01', '02', '03',
+                                                             '04', '05', '06',
+                                                             '07', '08', '09']
+                                                    else x)
     merge = referendum_merge.merge(regions_and_departments,
                                    left_on='Department code',
                                    right_on='code_dep')
