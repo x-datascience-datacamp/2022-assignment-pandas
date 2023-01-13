@@ -18,7 +18,6 @@ def load_data():
     departments = pd.read_csv('./data/departments.csv')
     referendum = pd.read_csv('./data/referendum.csv', delimiter=";")
     regions = pd.read_csv('./data/regions.csv')
-
     return referendum, regions, departments
 
 
@@ -89,7 +88,6 @@ def plot_referendum_map(referendum_result_by_regions):
     gdf = gpd.GeoDataFrame(res)
     gdf.plot("ratio")
     return gdf
-
 
 if __name__ == "__main__":
     ref, df_reg, df_dep = load_data()
