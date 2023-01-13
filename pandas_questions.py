@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
 
-    path = "C:/Users/mvero/Desktop/Cours/M3/Cours M3/Datacamp/2022-assignment-pandas/data"
+    path = "data"
     referendum = pd.read_csv(f"{path}/referendum.csv", delimiter=';', on_bad_lines='skip')
     regions = pd.read_csv(f"{path}/regions.csv", on_bad_lines='skip')
     departments = pd.read_csv(f"{path}/departments.csv", delimiter=',', on_bad_lines='skip')
