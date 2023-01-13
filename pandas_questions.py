@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-
     path = "data"
     referendum = pd.read_csv(f"{path}/referendum.csv",
                              delimiter=';',
@@ -103,6 +102,7 @@ def compute_referendum_result_by_regions(referendum_and_areas: pd.DataFrame):
 
 def plot_referendum_map(referendum_result_by_regions: pd.DataFrame):
     """Plot a map with the results from the referendum.
+    
     * Load the geographic data with geopandas from `regions.geojson`.
     * Merge these info into `referendum_result_by_regions`.
     * Use the method `GeoDataFrame.plot` to display the result map. The results
