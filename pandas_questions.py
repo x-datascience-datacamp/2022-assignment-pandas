@@ -36,8 +36,9 @@ def merge_regions_and_departments(regions: pd.DataFrame,
     """
     regions.columns = ['id', 'code_reg', 'name_reg', 'slug']
     departments.columns = ['id', 'code_reg', 'code_dep', 'name_dep', 'slug']
+    dep = departments[['code_reg', 'code_dep', 'name_dep']]
     merged_reg_dep = pd.merge(regions[['code_reg', 'name_reg']],
-                              departments[['code_reg', 'code_dep', 'name_dep']],
+                              dep,
                               on='code_reg', how='left')
 
     return merged_reg_dep
@@ -64,7 +65,9 @@ def compute_referendum_result_by_regions(referendum_and_areas: pd.DataFrame):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    absolute_count = referendum_and_areas.groupby(["code_reg", "name_reg"]).aggregate(np.sum).reset_index()
+    ref_area = referendum_and_areas
+    codename = ["code_reg", "name_reg"]
+    absolute_count = ref_area.groupby(codename).aggregate(np.sum).reset_index()
     absolute_count = absolute_count[['name_reg', 'Registered', 'Abstentions',
                                      'Null', 'Choice A', 'Choice B']]
 
@@ -81,10 +84,11 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     reg_json = gpd.read_file("data/regions.geojson")
-    referendum_result_by_regions['nom'] = referendum_result_by_regions['name_reg']
-    referendum_result_by_regions["ratio"] = (referendum_result_by_regions["Choice A"]/
-                                            (referendum_result_by_regions["Choice A"]+
-                                              referendum_result_by_regions["Choice B"]))
+    ref_res_by_regions = referendum_result_by_regions
+    ref_res_by_regions['nom'] = ref_res_by_regions['name_reg']
+    ref_res_by_regions["ratio"] = (ref_res_by_regions["Choice A"] /
+                                   (ref_res_by_regions["Choice A"] +
+                                    ref_res_by_regions["Choice B"]))
 
     ref_map = gpd.GeoDataFrame(pd.merge(referendum_result_by_regions,
                                         reg_json, on='nom'))
