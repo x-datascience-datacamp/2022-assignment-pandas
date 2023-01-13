@@ -88,7 +88,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
              'Choice B']
             ].sum()
     referendum_result_by_regions = referendum_result_by_regions.reset_index()
-    referendum_result_by_regions = referendum_result_by_regions.set_index('code_reg')
+    referendum_result_by_regions = referendum_result_by_regions.set_index(
+        'code_reg')
 
     return referendum_result_by_regions
 
@@ -111,7 +112,8 @@ def plot_referendum_map(referendum_result_by_regions):
         left_on='code',
         right_on='code_reg'
     )
-    geo_ref['ratio'] = geo_ref['Choice A']/(geo_ref['Choice A'] + geo_ref['Choice B'])
+    geo_ref['ratio'] = geo_ref['Choice A']/(
+        geo_ref['Choice A'] + geo_ref['Choice B'])
     geo_df = gpd.GeoDataFrame(geo_ref)
     geo_df.plot('ratio')
 
