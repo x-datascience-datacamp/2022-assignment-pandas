@@ -29,8 +29,10 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
 
-    df = pd.merge(regions, departments, right_on="region_code",
-                  left_on="code", how="left")
+    df = pd.merge(
+        regions, departments, right_on="region_code", left_on="code",
+        how="left"
+    )
 
     df = df.drop(columns=["id_x", "slug_x", "id_y", "slug_y", "region_code"])
 
@@ -116,9 +118,7 @@ def plot_referendum_map(referendum_result_by_regions):
 if __name__ == "__main__":
 
     referendum, df_reg, df_dep = load_data()
-    regions_and_departments = merge_regions_and_departments(
-        df_reg, df_dep
-    )
+    regions_and_departments = merge_regions_and_departments(df_reg, df_dep)
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
