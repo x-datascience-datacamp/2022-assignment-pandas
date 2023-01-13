@@ -76,7 +76,7 @@ def plot_referendum_map(referendum_result_by_regions):
     df1 = df.merge(referendum_result_by_regions, how='inner',
                    left_on='nom', right_on='name_reg')
     df1['ratio'] = df1['Choice A'] / \
-        (df1['Choice A']+df1['Choice B'])
+        (df1['Choice A'] + df1['Choice B'])
     df1.plot('ratio')
 
     return df1
