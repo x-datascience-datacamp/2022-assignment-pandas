@@ -23,6 +23,7 @@ def test_load_data():
 
 
 def test_merge_regions_and_departments():
+
     referendum, df_reg, df_dep = load_data()
 
     regions_and_departments = merge_regions_and_departments(
