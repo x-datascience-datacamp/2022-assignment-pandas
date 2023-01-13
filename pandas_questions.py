@@ -89,11 +89,11 @@ def plot_referendum_map(referendum_result_by_regions):
     data = referendum_result_by_regions.merge(geo_data,
                                               right_on="code",
                                               left_index=True)
-    data['ratio'] = data['Choice A'] / (
-            data['Registered'] - data['Abstentions'] - data["Null"]
+    data["ratio"] = data["Choice A"] / (
+            data["Registered"] - data["Abstentions"] - data["Null"]
     )
     data = gpd.GeoDataFrame(data)
-    data.plot()
+    data.plot("ratio", cmap="Blues", legend=True)
     return data
 
 
