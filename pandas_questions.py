@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    referendum = pd.read_csv('data/referendum.csv', sep=';')
+    regions = pd.read_csv("data/regions.csv")
+    departments = pd.read_csv("data/departments.csv")
 
     return referendum, regions, departments
 
@@ -29,7 +29,22 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
 
-    return pd.DataFrame({})
+    df = pd.merge(
+        regions, departments, left_on="code",
+        right_on="region_code", how="left"
+        )
+    df.rename(
+        columns={
+            "name_x": "name_reg",
+            "name_y": "name_dep",
+            "region_code": "code_reg",
+            "code_y": "code_dep"
+            },
+        inplace=True
+        )
+    return pd.DataFrame(
+        df[["code_reg", "name_reg", "code_dep", "name_dep"]]
+        )
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,8 +53,13 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
-    return pd.DataFrame({})
+    ref = referendum.copy()
+    ref['Department code'] = ref['Department code'].str.zfill(2)
+    df = pd.merge(
+        ref, regions_and_departments,
+        left_on='Department code', right_on='code_dep'
+     )
+    return pd.DataFrame(df)
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -49,7 +69,21 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    return pd.DataFrame({})
+    df = referendum_and_areas.groupby(
+        ['name_reg', 'code_reg'],
+        as_index=False).sum()
+    df.reset_index()
+    df.set_index("code_reg")
+    return df[
+        [
+            'name_reg',
+            'Registered',
+            'Abstentions',
+            'Null',
+            'Choice A',
+            'Choice B'
+        ]
+        ]
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -62,7 +96,15 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
 
-    return gpd.GeoDataFrame({})
+    data = gpd.read_file("data/regions.geojson")
+    referendum_result_by_regions['nom'] = \
+        referendum_result_by_regions['name_reg']
+    df = gpd.GeoDataFrame(
+        pd.merge(referendum_result_by_regions, data, on='nom')
+        )
+    df["ratio"] = (df["Choice A"] / (df["Choice A"]+df["Choice B"]))
+    df.plot("ratio")
+    return df
 
 
 if __name__ == "__main__":
