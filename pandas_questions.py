@@ -39,23 +39,31 @@ def merge_regions_and_departments(regions, departments):
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
-
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    name_reg_drop = ["Guadeloupe", 'Martinique',"Guyane", "La Réunion", "Mayotte","Collectivités d'Outre-Mer"]
-    regions_and_departments = regions_and_departments.drop(
-    regions_and_departments[regions_and_departments["name_reg"] in name_reg_drop ].index)
-    
-    name_dep_drop = ["FRANCAIS DE L'ETRANGER", 'POLYNESIE FRANCAISE', "MARTINIQUE","NOUVELLE CALEDONIE",
-     'GUADELOUPE', "LA REUNION", "GUYANE","MAYOTTE", 'SAINT-MARTIN/SAINT-BARTHELEMY',
-      'SAINT PIERRE ET MIQUELON', 'WALLIS-ET-FUTUNA']
-    referendum = referendum.drop(referendum[referendum["Department name"] in name_dep_drop].index)
 
+    to_drop = ["Guadeloupe", 'Martinique',
+               "Guyane", "La Réunion", "Mayotte",
+               "Collectivités d'Outre-Mer"]
+    regions_and_departments = regions_and_departments.drop(
+        regions_and_departments[regions_and_departments["name_reg"].apply(
+            lambda x:x in to_drop)].index)
+
+    to_drop = ["FRANCAIS DE L'ETRANGER", 'POLYNESIE FRANCAISE', "MARTINIQUE",
+               "NOUVELLE CALEDONIE", 'GUADELOUPE', "LA REUNION", "GUYANE",
+               "MAYOTTE", 'SAINT-MARTIN/SAINT-BARTHELEMY',
+               'SAINT PIERRE ET MIQUELON', 'WALLIS-ET-FUTUNA']
+    referendum = referendum.drop(
+        referendum[referendum["Department name"].apply(
+            lambda x:x in to_drop)].index)
     referendum["code_dep"] = referendum["Department code"]
-    idx = regions_and_departments[regions_and_departments["code_dep"].apply(lambda x:x.startswith('0'))].index
-    regions_and_departments.loc[idx, "code_dep"] = regions_and_departments.loc[idx, "code_dep"].apply(
-        lambda x: x.split('0')[1])
+    idx = regions_and_departments[
+        regions_and_departments["code_dep"].apply(
+            lambda x:x.startswith('0'))].index
+    regions_and_departments.loc[idx, "code_dep"] = regions_and_departments.loc[
+        idx, "code_dep"].apply(
+            lambda x: x.split('0')[1])
     dic_dep_codereg = regions_and_departments.groupby(
         'code_dep')['code_reg'].unique().to_dict()
     dic_dep_namereg = regions_and_departments.groupby(
