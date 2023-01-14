@@ -114,7 +114,7 @@ def plot_referendum_map(referendum_result_by_regions):
         right_on='code_reg'
     )
     geo_ref['ratio'] = geo_ref['Choice A']/(geo_ref['Choice A']
-                                    + geo_ref['Choice B'])
+                                            + geo_ref['Choice B'])
     geo_df = gpd.GeoDataFrame(geo_ref)
     geo_df.plot('ratio')
 
