@@ -27,10 +27,7 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    departments = departments.rename(
-        columns={
-            "name": "name_dep",
-            "code": "code_dep"})
+    departments = departments.rename(columns={"name": "name_dep", "code": "code_dep"})
     Data = pd.merge(
         regions[["code", "name"]],
         departments[["region_code", "code_dep", "name_dep"]],
@@ -84,8 +81,9 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     Data = Data2.groupby("code_reg").agg(
         {c: "sum" if Data2[c].dtype == "int64" else "first" for c in Data2.columns}
     )
-    Data = Data[["name_reg", "Registered",
-                 "Abstentions", "Null", "Choice A", "Choice B"]]
+    Data = Data[
+        ["name_reg", "Registered", "Abstentions", "Null", "Choice A", "Choice B"]
+    ]
     return Data
 
 
@@ -121,8 +119,7 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(
-        referendum_and_areas)
+    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
