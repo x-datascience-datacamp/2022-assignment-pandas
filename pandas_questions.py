@@ -78,11 +78,16 @@ def compute_referendum_result_by_regions(referendum_and_areas):
             "Choice B",
         ]
     ]
-    Data2[["Registered", "Abstentions", "Null", "Choice A", "Choice B"]] = Data2[
-        ["Registered", "Abstentions", "Null", "Choice A", "Choice B"]
-    ].apply(pd.to_numeric)
+    Data2[["Registered", "Abstentions", "Null", "Choice A", "Choice B"]] = (
+        Data2[["Registered", "Abstentions", "Null", "Choice A", "Choice B"]]
+        .apply(pd.to_numeric)
+    )
+
     Data = Data2.groupby("code_reg").agg(
-        {c: "sum" if Data2[c].dtype == "int64" else "first" for c in Data2.columns}
+        {
+            c: "sum" if Data2[c].dtype == "int64" else "first"
+            for c in Data2.columns
+        }
     )
     Data = Data[["name_reg", "Registered",
                  "Abstentions", "Null", "Choice A", "Choice B"]]
