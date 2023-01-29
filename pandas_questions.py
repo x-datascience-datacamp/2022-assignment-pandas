@@ -72,8 +72,8 @@ def plot_referendum_map(referendum_result_by_regions):
                       right_on='code_reg')
 
     fig, ax = plt.subplots()
-    geo_df['ratio'] = geo_df['Choice A'] / \
-                      (geo_df['Choice A'] + geo_df['Choice B'])
+    total = geo_df['Choice A'] + geo_df['Choice B']
+    geo_df['ratio'] = geo_df['Choice A'] / total
     geo_df.plot('ratio', ax=ax, legend=True,
                 legend_kwds={'label': "Choice A proportion",
                              'orientation': "vertical"},
