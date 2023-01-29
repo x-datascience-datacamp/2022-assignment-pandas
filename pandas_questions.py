@@ -23,7 +23,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     return regions.merge(departments, left_on='code', right_on='region_code')[
         ['region_code', 'name_x', 'code_y', 'name_y']].rename(
         columns={'region_code': 'code_reg', 'name_x': 'name_reg',
@@ -48,6 +47,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
+
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
@@ -66,7 +66,6 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
     geo_pos = gpd.read_file('./data/regions.geojson')
     geo_df = pd.merge(geo_pos, referendum_result_by_regions, left_on='code',
                       right_on='code_reg')
