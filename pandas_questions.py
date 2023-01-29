@@ -31,7 +31,8 @@ def merge_regions_and_departments(regions, departments):
 
     return regions.merge(departments, left_on='code', right_on='region_code')[
         ['region_code', 'name_x', 'code_y', 'name_y']].rename(
-        columns={'region_code': 'code_reg', 'name_x': 'name_reg', 'code_y': 'code_dep', 'name_y': 'name_dep'})
+        columns={'region_code': 'code_reg', 'name_x': 'name_reg',
+                 'code_y': 'code_dep', 'name_y': 'name_dep'})
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -78,7 +79,9 @@ def plot_referendum_map(referendum_result_by_regions):
     fig, ax = plt.subplots()
     geo_df['ratio'] = geo_df['Choice A'] / \
                       (geo_df['Choice A'] + geo_df['Choice B'])
-    geo_df.plot('ratio', ax=ax, legend=True, legend_kwds={'label': "Choice A proportion", 'orientation': "vertical"},
+    geo_df.plot('ratio', ax=ax, legend=True,
+                legend_kwds={'label': "Choice A proportion",
+                             'orientation': "vertical"},
                 cmap='OrRd')
     plt.show()
 
